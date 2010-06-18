@@ -21,15 +21,14 @@ package {
     public class BitmapScrollerApp extends Sprite {
 
     protected var preloadList:Array = ["image1.jpg","image2.jpg","image3.jpg","image4.jpg","image5.jpg","image6.jpg","image7.jpg","image8.jpg","image9.jpg","image10.jpg","image11.jpg","image12.jpg","image13.jpg","image14.jpg","image15.jpg","image16.jpg","image17.jpg","image18.jpg","image19.jpg","image20.jpg","image21.jpg","image22.jpg","image23.jpg","image24.jpg","image25.jpg","image26.jpg","image27.jpg","image28.jpg","image29.jpg"];
-    protected static const BASE_URL:String = "/images/";
+    protected var baseURL:String = "images/";
     protected var currentlyLoading:String;
     protected var loader:Loader = new Loader();
     private var bitmapScroller:BitmapScroller;
     private var scrubber:HSlider;
     private var images:Vector.<BitmapData> = new Vector.<BitmapData>();
     protected var previewScale:Number = .25;
-    private var bitmapDisplay:Bitmap;
-    protected var sampleArea:Rectangle = new Rectangle(0, 0, 480, 800);
+    protected var sampleArea:Rectangle;
     private var easeScrollBehavior:EaseScrollBehavior;
     private var stats:Stats;
     private var isMouseDown:Boolean;
@@ -48,16 +47,24 @@ package {
 
     protected function init():void
     {
+        sampleArea = new Rectangle(0, 0, stage.stageWidth, stage.stageHeight);
+
         createBitmapScroller();
         createScrubber();
         createEaseScrollBehavior();
         createStats();
 
-        //This method is here for mobile testing
-        fingerTouch();
-
-        // calls stage resize once to put everything in its correct place
-        onStageResize();
+        if(CONFIG::mobile)
+        {
+            baseURL = "/"+baseURL;
+            //This method is here for mobile testing
+            fingerTouch();
+        }
+        else
+        {
+            // calls stage resize once to put everything in its correct place
+            onStageResize();
+        }
 
         // Once everything is set up add stage resize listeners
         this.stage.addEventListener(Event.RESIZE, onStageResize);
@@ -69,32 +76,9 @@ package {
     {
         sampleArea.width = scrubber.width = stage.stageWidth;
 
+        bitmapScroller.internalSampleArea = sampleArea;
     }
 
-
-    private function fingerTouch():void
-    {
-        stage.addEventListener(MouseEvent.MOUSE_UP, onMouseUp);
-        stage.addEventListener(MouseEvent.MOUSE_DOWN, onMouseDown);
-        stage.addEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
-    }
-
-    private function onMouseDown(event:MouseEvent):void {
-        isMouseDown = true;
-    }
-
-    private function onMouseUp(event:MouseEvent):void {
-        isMouseDown = false;
-    }
-
-    private function onMouseMove(event:MouseEvent):void
-    {
-        if(isMouseDown){
-
-            var percent:Number = event.localX/stage.stageWidth * 100;
-            scrubber.value = percent;
-        }
-    }
 
     private function createStats():void {
         stats = addChild(new Stats({ bg: 0x000000 })) as Stats;
@@ -164,7 +148,7 @@ package {
         loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, onError);
         loader.contentLoaderInfo.addEventListener(SecurityErrorEvent.SECURITY_ERROR, onError);
 
-        loader.load(new URLRequest(BASE_URL + currentlyLoading));
+        loader.load(new URLRequest(baseURL + currentlyLoading));
     }
 
     private function onError(event:*):void {
@@ -187,7 +171,6 @@ package {
 
     public function loop():void
     {
-        //mouseScrollBehavior.calculateTargetPos(mouseX, mouseY);
 
         var percent:Number = scrubber.value / 100;
         var s:Number = bitmapScroller.totalWidth;
@@ -200,5 +183,30 @@ package {
         bitmapScroller.sampleBitmapData();
     }
 
+    // This is for mobile touch support    
+
+    private function fingerTouch():void
+    {
+        stage.addEventListener(MouseEvent.MOUSE_UP, onMouseUp);
+        stage.addEventListener(MouseEvent.MOUSE_DOWN, onMouseDown);
+        stage.addEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
+    }
+
+    private function onMouseDown(event:MouseEvent):void {
+        isMouseDown = true;
+    }
+
+    private function onMouseUp(event:MouseEvent):void {
+        isMouseDown = false;
+    }
+
+    private function onMouseMove(event:MouseEvent):void
+    {
+        if(isMouseDown){
+
+            var percent:Number = event.localX/stage.stageWidth * 100;
+            scrubber.value = percent;
+        }
+    }
 }
 }

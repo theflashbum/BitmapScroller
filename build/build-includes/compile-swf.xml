@@ -58,7 +58,7 @@
             <arg value="-headless-server=true"/>
             <arg value="-use-network=false"/>
             <arg value="-default-frame-rate=31"/>
-
+            <arg value="-define=CONFIG::mobile,${mobile}"/>
         </java>
 
         <echo>[compile] Debug SWF ${project.name.versioned}.swf created successfully</echo>

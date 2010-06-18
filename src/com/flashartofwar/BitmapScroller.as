@@ -62,14 +62,9 @@ package com.flashartofwar
 
         public function sampleBitmapData():void
         {
-            // We clone this so it will not modify the ordinal sampleArea Rectangle that is passed in
-            //internalSampleArea = sampleAreaSrc.clone();
-
-            //TODO this needs to be optimized
             bitmapData.fillRect(internalSampleArea, 0);
 
             sample(internalSampleArea.clone(), bitmapData);
-
         }
 
         protected function init():void
@@ -217,7 +212,8 @@ package com.flashartofwar
         public function set internalSampleArea(value:Rectangle):void
         {
             _internalSampleArea = value;
-            bitmapData = new BitmapData(_internalSampleArea.width, _internalSampleArea.height, false, 0x000000)
+            bitmapData = new BitmapData(_internalSampleArea.width, _internalSampleArea.height, false, 0x000000);
+            sampleBitmapData();
         }
     }
 }
