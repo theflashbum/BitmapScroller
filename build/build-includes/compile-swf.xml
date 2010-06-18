@@ -1,0 +1,92 @@
+<?xml version="1.0"?>
+<project name="compile-swf" basedir="." default="local-run">
+
+
+    <target name="clean-bin">
+        <!-- Remove all directories created during the build process -->
+        <if>
+            <available type="dir" file="${bin.loc}"/>
+            <then>
+                <delete includeemptydirs="true" failonerror="false">
+                    <fileset dir="${bin.loc}" defaultexcludes="false">
+                        <include name="**/*"/>
+                    </fileset>
+                </delete>
+            </then>
+            <else>
+                <mkdir dir="${bin.loc}"/>
+            </else>
+        </if>
+    </target>
+
+
+    <target name="setup-bin" depends="clean-bin">
+        <sync todir="${bin.loc}">
+            <fileset dir="${basedir}/build/bin-resources"/>
+        </sync>
+
+        <copy file="${basedir}/build/html-template/index.template.html" tofile="${bin.loc}/index.html"/>
+
+        <replace file="${bin.loc}/index.html" propertyFile="${basedir}/build/html-template/html.properties">
+            <replacefilter token="@width@" property="width"/>
+            <replacefilter token="@height@" property="height"/>
+            <replacefilter token="@example@" value="${project.name.versioned}"/>
+            <replacefilter token="@version_major@" property="version_major"/>
+            <replacefilter token="@version_minor@" property="version_minor"/>
+            <replacefilter token="@version_minor@" property="version_minor"/>
+            <replacefilter token="@version_revision@" property="version_revision"/>
+        </replace>
+    </target>
+
+    <!-- Compile Release SWF -->
+    <target name="compile" depends="setup-bin">
+        <echo>[compile] Compiling SWF</echo>
+        <echo>[compile] Using Flex SDK at: ${FLEX_HOME}</echo>
+
+        <java jar="${FLEX_HOME}/lib/mxmlc.jar" dir="${FLEX_HOME}/frameworks" fork="true" failonerror="true">
+            <arg value="${main.src.loc}/${project.name}.as"/>
+            <arg value="-source-path=${main.src.loc}"/>
+
+            <arg value="-output=${bin.loc}/swfs/${project.name.versioned}.swf"/>
+            <arg value="-static-link-runtime-shared-libraries=true"/>
+            <!-- Include classes from SWCs in this folder, but only the ones we use. -->
+            <arg value="-library-path+=${lib.loc}"/>
+            <arg value="-library-path+=${air.swcs}"/>
+            <arg value="-incremental=true"/>
+            <arg value="-debug=true"/>
+            <arg value="-verbose-stacktraces=true"/>
+            <arg value="-headless-server=true"/>
+            <arg value="-use-network=false"/>
+            <arg value="-default-frame-rate=31"/>
+
+        </java>
+
+        <echo>[compile] Debug SWF ${project.name.versioned}.swf created successfully</echo>
+    </target>
+
+    <target name="local-run" depends="compile">
+        <echo message="${os.name}"/>
+        <if>
+            <equals arg1="${os.name}" arg2="Mac OS X"/>
+            <then>
+                <antcall target="local-run-mac"/>
+            </then>
+            <else>
+                <antcall target="local-run-pc"/>
+            </else>
+        </if>
+    </target>
+
+    <target name="local-run-pc">
+        <exec executable="${browser}">
+            <arg line="file://${bin.loc}/index.html"/>
+        </exec>
+    </target>
+
+    <target name="local-run-mac">
+        <exec executable="open">
+            <arg line="-a ${browser} ${bin.loc}/index.html"/>
+        </exec>
+    </target>
+
+</project>

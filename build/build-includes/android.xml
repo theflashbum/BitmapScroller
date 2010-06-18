@@ -1,0 +1,65 @@
+<?xml version="1.0"?>
+<project name="android" basedir=".">
+
+    <target name="prep-bin">
+        <copy file="${basedir}/build/android-resources/template-air-app.xml"
+              tofile="${bin.loc}/${project.name}-air-app.xml"/>
+
+        <replace file="${bin.loc}/${project.name}-air-app.xml">
+            <replacefilter token="@project@" value="${project.name}"/>
+            <replacefilter token="@package@" value="${app.package}"/>
+            <replacefilter token="@version@" value="1"/>
+            <replacefilter token="@projectversion@" value="${project.name.versioned}"/>
+        </replace>
+    </target>
+
+    <!-- Android Deployment -->
+    <target name="package-apk" depends="prep-bin">
+
+        <java jar="${FLEX_HOME}/lib/adt.jar" fork="true" failonerror="true">
+            <arg value="-package"/>
+            <arg value="-target"/>
+            <arg value="apk"/>
+            <arg value="-storetype"/>
+            <arg value="pkcs12"/>
+            <arg value="-keystore"/>
+            <arg value="${basedir}/build/android-resources/codesigningCert.p12"/>
+            <arg value="-storepass"/>
+            <arg value="${password}"/>
+
+
+            <arg value="${basedir}/bin/${project.name.versioned}.apk"/>
+            <arg value="${basedir}/bin/${project.name}-air-app.xml"/>
+
+            <arg value="-C"/>
+            <arg value="${basedir}/bin"/>
+            <arg value="."/>
+
+        </java>
+    </target>
+
+    <target name="deploy-to-phone" depends="package-apk">
+        <exec executable="${adb}">
+            <arg value="-d"/>
+            <arg value="install"/>
+            <arg value="${bin.loc}/${project.name.versioned}.apk"/>
+        </exec>
+    </target>
+
+    <target name="deploy-to-emulator" depends="package-apk">
+        <exec executable="${adb}">
+            <!--          <arg value="-s"/>
+            <arg value="emulator-5556"/>-->
+            <arg value="-e"/>
+            <arg value="install"/>
+            <arg value="${bin.loc}/${project.name.versioned}.apk"/>
+        </exec>
+    </target>
+
+    <target name="uninstall-apk">
+        <exec executable="${adb}">
+            <arg value="uninstall"/>
+            <arg value="app.${app.package}"/>
+        </exec>
+    </target>
+</project>

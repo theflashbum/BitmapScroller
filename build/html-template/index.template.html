@@ -1,0 +1,33 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+  <head>
+    <title>@example@</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+    <style type="text/css">
+        /*<![CDATA[*/
+            html, body {
+                height: 100%;
+                overflow: hidden;
+            }
+            body {
+                background: @bgcolor@;
+                font: 86% Arial, "Helvetica Neue", sans-serif;
+                margin: 0;                
+            }
+            #content {
+                height: 100%;
+            }
+        /*]]>*/
+        </style>
+    <script type="text/javascript" src="js/swfobject.js"></script>
+    <script type="text/javascript">
+    swfobject.embedSWF("swfs/@example@.swf", "flashContent", "@width@", "@height@", "@version_major@.@version_minor@.@version_revision@", "#ff0000");
+    </script>
+
+  </head>
+  <body>
+    <div id="flashContent">
+      <p>You will need Flash Player 10+ to see this site.</p>
+    </div>
+  </body>
+</html>

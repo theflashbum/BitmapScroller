@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<project name="BitmapDataCollectionSampler" basedir="." default="full-build">
+    <!-- This is 60% ripped off from RobotLegs - http://github.com/darscan/robotlegs-framework.
+     I am working on making my own but this one is so damn good I couldn't help myself. -->
+
+    <!-- identify properties file -->
+    <property file="build.properties" />
+
+    <!-- Set up FlexUnit Ant tasks -->
+    <taskdef resource="flexUnitTasks.tasks" classpath="${lib.loc}/flexUnitTasks.jar" />
+
+    <!-- Add the ant-contrib tasks -->
+    <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpath="${lib.loc}/ant-contrib.jar" />
+
+    <import file="${includes.loc}/misc.xml" />
+    <import file="${includes.loc}/test.xml" />
+    <import file="${includes.loc}/asdoc.xml" />
+    <import file="${includes.loc}/compile-swf.xml" />
+    <import file="${includes.loc}/compile-swc.xml" />
+    <import file="${includes.loc}/android.xml" />
+
+    <target name="usage" depends="misc.usage" description="Prints usage message" />
+
+    <target name="test" depends="test.run" description="Runs unit tests and displays the report"/>
+
+    <target name="asdoc" depends="asdoc.gen" description="generates ASDoc"/>
+
+    <target name="compile" description="Compiles the project as a swf">
+        <runtarget target="compile-swf.compile" />
+    </target>
+
+    <target name="full-build" depends="test,compile" description="Runs tests, compiles project, and optionally runs it.">
+        <if>
+            <istrue value="${autolaunch.url}"/>
+            <then><runtarget target="compile-swf.local-run"/></then>
+        </if>
+    </target>
+
+    <target name="compile-swc" description="Compiles project as swc" depends="compile-swc.compile" />
+
+    <target name="deploy-lib" description="Prepares swf lib and moves it to deploy directory" depends="compile-swc.deploy"/>
+
+    <target name="package-apk" depends="compile" description="Packages up project for deployment to android">
+        <runtarget target="android.package-apk" />
+    </target>
+
+    <target name="deploy-to-emulator" depends="package-apk,android.deploy-to-emulator" />
+    <target name="deploy-to-phone" depends="package-apk,android.deploy-to-phone" />
+</project>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<application xmlns="http://ns.adobe.com/air/application/2.5">
+    <id>@package@</id>
+    <filename>@project@</filename>
+    <name>@project@</name>
+    <versionNumber>@version@</versionNumber>
+    <supportedProfiles>mobileDevice</supportedProfiles>
+    <initialWindow>
+        <content>swfs/@projectversion@.swf</content>
+        <visible>true</visible>
+    </initialWindow>
+    <!--<icon>
+<image72x72>images/logos/app-logo-72x72.png</image72x72>
+<image48x48>images/logos/app-logo-48x48.png</image48x48>
+<image36x36>images/logos/app-logo-36x36.png</image36x36>
+</icon>-->
+</application>
