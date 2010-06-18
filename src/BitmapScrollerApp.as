@@ -35,7 +35,13 @@ package {
 
     public function BitmapScrollerApp()
     {
-        configureStage();   
+        configureStage();
+
+        if(CONFIG::mobile)
+        {
+            baseURL = "/"+baseURL;
+        }
+
         preload();
     }
 
@@ -56,18 +62,18 @@ package {
 
         if(CONFIG::mobile)
         {
-            baseURL = "/"+baseURL;
             //This method is here for mobile testing
             fingerTouch();
         }
         else
         {
+            // Once everything is set up add stage resize listeners
+            this.stage.addEventListener(Event.RESIZE, onStageResize);
+            
             // calls stage resize once to put everything in its correct place
             onStageResize();
         }
 
-        // Once everything is set up add stage resize listeners
-        this.stage.addEventListener(Event.RESIZE, onStageResize);
 
         activateLoop();
     }

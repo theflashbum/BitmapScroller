@@ -38,11 +38,15 @@
 
     <target name="deploy-lib" description="Prepares swf lib and moves it to deploy directory" depends="compile-swc.deploy"/>
 
-    <target name="package-apk" depends="compile" description="Packages up project for deployment to android">
+    <target name="package-apk" description="Packages up project for deployment to android">
+        <property name="mobile" value="true" />
+        <echo message="${mobile}"/>
+        <runtarget target="compile" />
         <runtarget target="android.package-apk" />
     </target>
 
     <target name="deploy-to-emulator" depends="package-apk,android.deploy-to-emulator" />
 
     <target name="deploy-to-phone" depends="package-apk,android.deploy-to-phone" />
+    
 </project>
