@@ -39,7 +39,7 @@
     <target name="deploy-lib" description="Prepares swf lib and moves it to deploy directory" depends="compile-swc.deploy"/>
 
     <target name="package-apk" description="Packages up project for deployment to android">
-        <property name="mobile" value="true" />
+        <var name="mobile" value="true" />
         <echo message="${mobile}"/>
         <runtarget target="compile" />
         <runtarget target="android.package-apk" />
