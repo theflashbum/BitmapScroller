@@ -11,6 +11,8 @@
             <replacefilter token="@version@" value="1"/>
             <replacefilter token="@projectversion@" value="${project.name.versioned}"/>
         </replace>
+
+        <antcall target="uninstall-apk"/>
     </target>
 
     <!-- Android Deployment -->

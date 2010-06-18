@@ -21,7 +21,7 @@ package {
     public class BitmapScrollerApp extends Sprite {
 
     protected var preloadList:Array = ["image1.jpg","image2.jpg","image3.jpg","image4.jpg","image5.jpg","image6.jpg","image7.jpg","image8.jpg","image9.jpg","image10.jpg","image11.jpg","image12.jpg","image13.jpg","image14.jpg","image15.jpg","image16.jpg","image17.jpg","image18.jpg","image19.jpg","image20.jpg","image21.jpg","image22.jpg","image23.jpg","image24.jpg","image25.jpg","image26.jpg","image27.jpg","image28.jpg","image29.jpg"];
-    protected static const BASE_URL:String = "images/";
+    protected static const BASE_URL:String = "/images/";
     protected var currentlyLoading:String;
     protected var loader:Loader = new Loader();
     private var bitmapScroller:BitmapScroller;
@@ -132,12 +132,9 @@ package {
 
     private function createBitmapScroller():void {
 
-        bitmapDisplay = new Bitmap();
-        bitmapScroller = new BitmapScroller(bitmapDisplay, images);
+        bitmapScroller = new BitmapScroller(sampleArea, images.slice());
 
-        addChild(bitmapDisplay);
-
-
+        addChild(bitmapScroller);
     }
 
     /**
@@ -200,7 +197,7 @@ package {
         //
         easeScrollBehavior.calculateScrollX();
         //
-        bitmapScroller.sampleBitmapData(sampleArea);
+        bitmapScroller.sampleBitmapData();
     }
 
 }

@@ -1,8 +1,6 @@
 <?xml version="1.0"?>
-<project name="BitmapDataCollectionSampler" basedir="." default="full-build">
-    <!-- This is 60% ripped off from RobotLegs - http://github.com/darscan/robotlegs-framework.
-     I am working on making my own but this one is so damn good I couldn't help myself. -->
-
+<project name="BitmapSampler" basedir="." default="full-build">
+    
     <!-- identify properties file -->
     <property file="build.properties" />
 

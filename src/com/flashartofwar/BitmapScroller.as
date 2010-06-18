@@ -5,7 +5,7 @@ package com.flashartofwar
     import flash.geom.Point;
     import flash.geom.Rectangle;
 
-    public class BitmapScroller
+    public class BitmapScroller extends Bitmap
     {
 
         protected var bitmapDataCollection:Vector.<BitmapData>;
@@ -18,7 +18,7 @@ package com.flashartofwar
         protected var inverseDirectionProp:String = "y";
         protected var dimensionProp:String = "width";
         protected var inverseDimensionProp:String = "height";
-        protected var internalSampleArea:Rectangle;
+        private var _internalSampleArea:Rectangle;
         protected var collectionID:int;
         protected var sourceRect:Rectangle;
         protected var sourceBitmapData:BitmapData;
@@ -29,13 +29,12 @@ package com.flashartofwar
         protected var difference:Number;
         protected var sampleArea:Rectangle;
         protected var samplePositionPoint:Point = new Point();
-        protected var target:Bitmap;
-
-        public function BitmapScroller(target:Bitmap, collection:Vector.<BitmapData>)
+        
+        public function BitmapScroller(sampleArea:Rectangle, collection:Vector.<BitmapData>, pixelSnapping:String = "auto", smoothing:Boolean = false)
         {
-
-            this.target = target;
-            bitmapDataCollection = collection.slice();
+            super(null, pixelSnapping ,smoothing);
+            internalSampleArea = sampleArea;
+            bitmapDataCollection = collection;
             init();
         }
 
@@ -61,15 +60,15 @@ package com.flashartofwar
             }
         }
 
-        public function sampleBitmapData(sampleAreaSrc:Rectangle):void
+        public function sampleBitmapData():void
         {
             // We clone this so it will not modify the ordinal sampleArea Rectangle that is passed in
-            internalSampleArea = sampleAreaSrc.clone();
+            //internalSampleArea = sampleAreaSrc.clone();
 
             //TODO this needs to be optimized
-            target.bitmapData = new BitmapData(internalSampleArea.width, internalSampleArea.height, false, 0x000000);
+            bitmapData.fillRect(internalSampleArea, 0);
 
-            sample(internalSampleArea, target.bitmapData);
+            sample(internalSampleArea.clone(), bitmapData);
 
         }
 
@@ -210,5 +209,15 @@ package com.flashartofwar
             return samplePositionPoint;
         }
 
+        public function get internalSampleArea():Rectangle
+        {
+            return _internalSampleArea;
+        }
+
+        public function set internalSampleArea(value:Rectangle):void
+        {
+            _internalSampleArea = value;
+            bitmapData = new BitmapData(_internalSampleArea.width, _internalSampleArea.height, false, 0x000000)
+        }
     }
 }

@@ -9,9 +9,9 @@
         <content>swfs/@projectversion@.swf</content>
         <visible>true</visible>
     </initialWindow>
-    <!--<icon>
-<image72x72>images/logos/app-logo-72x72.png</image72x72>
-<image48x48>images/logos/app-logo-48x48.png</image48x48>
-<image36x36>images/logos/app-logo-36x36.png</image36x36>
-</icon>-->
+    <icon>
+<image72x72>images/icons/app-icon-72x72.png</image72x72>
+<image48x48>images/icons/app-icon-48x48.png</image48x48>
+<image36x36>images/icons/app-icon-36x36.png</image36x36>
+</icon>
 </application>
