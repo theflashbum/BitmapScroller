@@ -134,7 +134,7 @@ public class BitmapScrollerTest extends BitmapScroller
     public function testExternalSampleRectIsNotModified():void
     {
 
-        sampleBitmapData();
+        render();
 
         Assert.assertEquals(sampleArea.toString(), "(x=0, y=0, w=500, h=100)");
     }

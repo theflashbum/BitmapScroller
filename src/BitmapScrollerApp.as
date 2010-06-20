@@ -30,7 +30,7 @@ package
         private var scrubber:HSlider;
         private var images:Vector.<BitmapData> = new Vector.<BitmapData>();
         protected var previewScale:Number = .25;
-        protected var sampleArea:Rectangle;
+        //protected var sampleArea:Rectangle;
         private var easeScrollBehavior:EaseScrollBehavior;
         private var stats:Stats;
         private var isMouseDown:Boolean;
@@ -64,8 +64,6 @@ package
          */
         protected function init():void
         {
-            sampleArea = new Rectangle(0, 0, stage.stageWidth, stage.stageHeight);
-
             createBitmapScroller();
             createScrubber();
             createEaseScrollBehavior();
@@ -95,9 +93,9 @@ package
          */
         private function onStageResize(event:Event = null):void
         {
-            sampleArea.width = scrubber.width = stage.stageWidth;
+            bitmapScroller.width = scrubber.width = stage.stageWidth;
+            bitmapScroller.height = stage.stageHeight;
 
-            bitmapScroller.internalSampleArea = sampleArea;
         }
 
         /**
@@ -131,7 +129,7 @@ package
          */
         private function createEaseScrollBehavior():void
         {
-            easeScrollBehavior = new EaseScrollBehavior(sampleArea, 0);
+            easeScrollBehavior = new EaseScrollBehavior(bitmapScroller, 0);
         }
 
         /**
@@ -150,8 +148,11 @@ package
         private function createBitmapScroller():void
         {
 
-            bitmapScroller = new BitmapScroller(sampleArea, images.slice());
-
+            bitmapScroller = new BitmapScroller();
+            bitmapScroller.width = stage.stageWidth;
+            bitmapScroller.height = stage.stageHeight;
+            bitmapScroller.bitmapDataCollection = images;
+            
             addChild(bitmapScroller);
         }
 
@@ -216,13 +217,13 @@ package
 
             var percent:Number = scrubber.value / 100;
             var s:Number = bitmapScroller.totalWidth;
-            var t:Number = sampleArea.width;
+            var t:Number = bitmapScroller.width;
 
             easeScrollBehavior.targetX = percent * (s - t);
             //
             easeScrollBehavior.calculateScrollX();
             //
-            bitmapScroller.sampleBitmapData();
+            bitmapScroller.render();
         }
 
         // This is for mobile touch support

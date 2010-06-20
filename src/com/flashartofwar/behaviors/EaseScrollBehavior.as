@@ -12,8 +12,8 @@ package com.flashartofwar.behaviors {
 
     public function EaseScrollBehavior(target:Object, targetX:Number = 0) {
 
-        if (!target.hasOwnProperty("x")) {
-            throw new Error("Supplied target does not have a X property.");
+        if (!target.hasOwnProperty("scrollX")) {
+            throw new Error("Supplied target does not have a scrollX property.");
         }
         else
         {
@@ -34,25 +34,11 @@ package com.flashartofwar.behaviors {
         if ((target.x != _targetX))
         {
             //t: current time, b: beginning value, c: change in position, d: duration
-            var c:Number = _targetX - target.x;
+            var c:Number = _targetX - target.scrollX;
             var t:Number = .25;
             var d:Number = .8;
-            var b:Number = target.x;
-            target.x = quadEaseInOut(t, b, c, d);
-
-        }
-    }
-
-    public function calculateScrollY():void
-    {
-        if ((target.y != _targetX))
-        {
-            //t: current time, b: beginning value, c: change in position, d: duration
-            var c:Number = _targetX - target.y;
-            var t:Number = .25;
-            var d:Number = 1;
-            var b:Number = target.y;
-            target.y = quadEaseInOut(t, b, c, d);
+            var b:Number = target.scrollX;
+            target.scrollX = Math.round(quadEaseInOut(t, b, c, d));
 
         }
     }
