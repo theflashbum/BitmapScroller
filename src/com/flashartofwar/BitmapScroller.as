@@ -25,7 +25,6 @@ package com.flashartofwar
         protected var sourceRect:Rectangle;
         protected var sourceBitmapData:BitmapData;
         protected var leftOver:Number;
-        protected var sampleAreaX:Number;
         protected var point:Point;
         protected var calculationPoint:Point = new Point();
         protected var difference:Number;
@@ -202,17 +201,15 @@ package com.flashartofwar
 
                 sourceBitmapData = _bitmapDataCollection[collectionID];
 
-                leftOver = calculateLeftOverValue(sampleArea.x, sampleArea.width, sourceRect);
-
-                sampleAreaX = sampleArea.x;
+                leftOver = Math.round(calculateLeftOverValue(sampleArea.x, sampleArea.width, sourceRect));
 
                 if (!offset)
                     offset = copyPixelOffset;
 
                 point = calculateSamplePosition(sampleArea, sourceRect);
 
-                sampleArea.x = Math.round(point.x);
-                sampleArea.y = Math.round(point.y);
+                sampleArea.x = point.x;
+                sampleArea.y = point.y;
 
                 output.copyPixels(sourceBitmapData, sampleArea, offset);
 

@@ -137,7 +137,6 @@ package
         {
             scrubber = new HSlider(this, 0, 0, null);
             scrubber.width = stage.stageWidth;
-            scrubber.x = 20;
             scrubber.y = 10;
         }
 

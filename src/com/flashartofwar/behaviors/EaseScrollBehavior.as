@@ -5,11 +5,8 @@ package com.flashartofwar.behaviors {
 
     public class EaseScrollBehavior extends EventDispatcher {
 
-    private var _targetX:Number;
+    public var targetX:Number;
     private var target:Object;
-    private var time:int;
-    private var defaultDuration:int = 500;
-    private var duration:int;
         
     public function EaseScrollBehavior(target:Object, targetX:Number = 0) {
 
@@ -19,48 +16,31 @@ package com.flashartofwar.behaviors {
         else
         {
             this.target = target;
-            _targetX = targetX;
+            targetX = targetX;
         }
 
-    }
-
-    public function set targetX(value:Number):void
-    {
-        if(_targetX == value)
-        {
-            return;
-        }
-        else
-        {
-            if((target.scrollX == _targetX))
-            {
-                time = getTimer();
-            }
-            else
-            {
-                duration += defaultDuration;
-            }
-            _targetX = value;
-        }
     }
 
     public function calculateScrollX():void
     {
 
-        if ((target.scrollX == _targetX))
+        if ((target.scrollX == targetX))
         {
-            duration = defaultDuration;
             return;
         }
         else
         {
-            var interval:int = getTimer() - time;
             //t: current time, b: beginning value, c: change in position, d: duration
-            var c:Number = _targetX - target.scrollX;
-            var t:Number = interval;
-            var d:Number = duration;
+            var c:Number = targetX - target.scrollX;
+            var t:Number = .25;
+            var d:Number = .8;
             var b:Number = target.scrollX;
             target.scrollX = quadEaseInOut(t, b, c, d);
+
+            if(((c ^ (c >> 31)) - (c >> 31)) < .01)
+            {
+                target.scrollX = targetX;
+            }
         }
 
 
