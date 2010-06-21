@@ -2,24 +2,25 @@ package com.flashartofwar
 {
     import flash.display.Bitmap;
     import flash.display.BitmapData;
+    import flash.display.BitmapData;
     import flash.events.Event;
     import flash.geom.Point;
+    import flash.geom.Rectangle;
     import flash.geom.Rectangle;
 
     public class BitmapScroller extends Bitmap
     {
-
-        private var _bitmapDataCollection:Vector.<BitmapData>;
+        private const INVALID_SIZE:String = "size";
+        private const INVALID_SCROLL:String = "scroll";
+        private const INVALID_SIZE_SCROLL:String = "all";
+        
+        protected var _bitmapDataCollection:Vector.<BitmapData>;
         protected var collectionRects:Vector.<Rectangle>;
         protected var _totalWidth:int = 0;
         protected var _maxHeight:Number = 0;
         protected var collectionTotal:int = 0;
         protected var copyPixelOffset:Point = new Point();
-        protected var directionProp:String = "x";
-        protected var inverseDirectionProp:String = "y";
-        protected var dimensionProp:String = "width";
-        protected var inverseDimensionProp:String = "height";
-        private var _internalSampleArea:Rectangle;
+        protected var internalSampleArea:Rectangle = new Rectangle(0,0, 0, 0);
         protected var collectionID:int;
         protected var sourceRect:Rectangle;
         protected var sourceBitmapData:BitmapData;
@@ -33,68 +34,62 @@ package com.flashartofwar
         protected var _invalid:Boolean;
         protected var invalidSize:Boolean;
         protected var invalidScroll:Boolean;
-        private const INVALID_SIZE:String = "size";
-        private const INVALID_SCROLL:String = "scroll";
-        private const INVALID_SIZE_SCROLL:String = "all";
 
         public function BitmapScroller(bitmapData:BitmapData = null, pixelSnapping:String = "auto", smoothing:Boolean = false)
         {
             super(null, pixelSnapping ,smoothing);
-            internalSampleArea = new Rectangle(0,0, 600, 800);
         }
-
 
         override public function get width():Number
         {
-            return _internalSampleArea.width;
+            return internalSampleArea.width;
         }
 
         override public function set width(value:Number):void
         {
-            if( value == _internalSampleArea.width)
+            if( value == internalSampleArea.width)
             {
                 return;
             }
             else
             {
-                _internalSampleArea.width = value;
+                internalSampleArea.width = value;
                 invalidate(INVALID_SIZE);
             }
         }
 
         override public function get height():Number
         {
-            return _internalSampleArea.height;
+            return internalSampleArea.height;
         }
 
         override public function set height(value:Number):void
         {
-            if( value == _internalSampleArea.height)
+            if( value == internalSampleArea.height)
             {
                 return;
             }
             else
             {
-                _internalSampleArea.height = value;
+                internalSampleArea.height = value;
                 invalidate(INVALID_SIZE);
             }
         }
 
         public function get scrollX():Number
         {
-            return _internalSampleArea.x;
+            return internalSampleArea.x;
         }
 
         public function set scrollX(value:Number):void
         {
-             if(value == _internalSampleArea.x)
+             if(value == internalSampleArea.x)
              {
                  return;
              }
             else
              {
-                 trace("value",value);
-                 _internalSampleArea.x = value;
+                 internalSampleArea.x = value;
                  invalidate(INVALID_SCROLL);
              }
         }
@@ -109,37 +104,24 @@ package com.flashartofwar
             return _maxHeight;
         }
 
-        public function set direction(value:String):void
-        {
-            //TODO this needs to be implemented
-            if (value == "horizontal")
-            {
-                directionProp = "x";
-                inverseDirectionProp = "y";
-                dimensionProp = "width";
-                inverseDirectionProp = "height";
-            }
-        }
-
         public function render():void
         {
 
             if (_invalid)
             {
                 // We check to see if the size has changed. If it has we create a new bitmap. If not we clear it with fillRect
-                trace("Render");
                 if(invalidSize)
                 {
-                    bitmapData = new BitmapData(_internalSampleArea.width, _internalSampleArea.height, false, 0x000000);
-                    invalidSize = true;
+                    bitmapData = new BitmapData(internalSampleArea.width, internalSampleArea.height, true, 0x000000);
+                    invalidSize = false;
                 }
                 else
                 {
-                    bitmapData.fillRect(_internalSampleArea, 0);
+                    bitmapData.fillRect(internalSampleArea, 0);
                 }
 
                 // Call sample to get the party started
-                draw(_internalSampleArea.clone(), bitmapData);
+                draw(internalSampleArea.clone());
 
                 // Clear any invalidation
                 _invalid = false;
@@ -168,15 +150,15 @@ package com.flashartofwar
                 rect = new Rectangle(lastX, 0, bmd.width, bmd.height);
                 collectionRects[i] = rect;
 
-                lastX += bmd[dimensionProp] + 1;
+                lastX += bmd.width + 1;
                 // Save out width information
-                lastWidth = bmd[dimensionProp];
+                lastWidth = bmd.width;
 
                 _totalWidth += lastWidth;
 
-                if (bmd[inverseDimensionProp] > maxHeight)
+                if (bmd.height > _maxHeight)
                 {
-                    _maxHeight = bmd[inverseDimensionProp];
+                    _maxHeight = bmd.height;
                 }
             }
 
@@ -206,9 +188,9 @@ package com.flashartofwar
             return -1;
         }
 
-        protected function draw(sampleArea:Rectangle, output:BitmapData, offset:Point = null):void
+        protected function draw(sampleArea:Rectangle,offset:Point = null):void
         {
-
+            var output:BitmapData = this.bitmapData;
             calculationPoint.x = sampleArea.x;
             calculationPoint.y = sampleArea.y;
 
@@ -220,26 +202,26 @@ package com.flashartofwar
 
                 sourceBitmapData = _bitmapDataCollection[collectionID];
 
-                leftOver = calculateLeftOverValue(sampleArea[directionProp], sampleArea[dimensionProp], sourceRect);
+                leftOver = calculateLeftOverValue(sampleArea.x, sampleArea.width, sourceRect);
 
-                sampleAreaX = sampleArea[directionProp];
+                sampleAreaX = sampleArea.x;
 
                 if (!offset)
                     offset = copyPixelOffset;
 
                 point = calculateSamplePosition(sampleArea, sourceRect);
 
-                sampleArea.x = point.x;
-                sampleArea.y = point.y;
+                sampleArea.x = Math.round(point.x);
+                sampleArea.y = Math.round(point.y);
 
                 output.copyPixels(sourceBitmapData, sampleArea, offset);
 
                 if (leftOver > 0)
                 {
-                    offset = new Point(output[dimensionProp] - leftOver, 0);
+                    offset = new Point(output.width - leftOver, 0);
                     var leftOverSampleArea:Rectangle = calculateLeftOverSampleArea(sampleArea, leftOver, sourceRect);
 
-                    draw(leftOverSampleArea, output, offset);
+                    draw(leftOverSampleArea, offset);
                 }
 
             }
@@ -249,7 +231,7 @@ package com.flashartofwar
         protected function calculateLeftOverValue(offset:Number, sampleWidth:Number, sourceRect:Rectangle):Number
         {
 
-            difference = (offset + sampleWidth) - (sourceRect[directionProp] + sourceRect[dimensionProp]);
+            difference = (offset + sampleWidth) - (sourceRect.x + sourceRect.width);
 
             return (difference < 0) ? 0 : difference;
         }
@@ -258,37 +240,24 @@ package com.flashartofwar
         protected function calculateLeftoverOffset(sampleArea:Rectangle, leftOver:Number):Point
         {
 
-            return new Point(sampleArea[dimensionProp] - leftOver, 0);
+            return new Point(sampleArea.width - leftOver, 0);
         }
 
         protected function calculateLeftOverSampleArea(sampleAreaSRC:Rectangle, leftOver:Number, sourceRect:Rectangle):Rectangle
         {
             sampleArea = sampleAreaSRC.clone();
-            sampleArea[dimensionProp] = leftOver + 1;
-            sampleArea[directionProp] = sourceRect[directionProp] + sourceRect[dimensionProp] + 1;
+            sampleArea.width = leftOver + 1;
+            sampleArea.x = sourceRect.x + sourceRect.width + 1;
 
             return sampleArea;
         }
 
         protected function calculateSamplePosition(sampleRect:Rectangle, sourceArea:Rectangle):Point
         {
-            samplePositionPoint[directionProp] = sampleRect[directionProp] - sourceArea[directionProp];
+            samplePositionPoint.x = sampleRect.x - sourceArea.x;
 
             return samplePositionPoint;
         }
-
-        public function get internalSampleArea():Rectangle
-        {
-            return _internalSampleArea;
-        }
-
-        public function set internalSampleArea(value:Rectangle):void
-        {
-            _internalSampleArea = value;
-            bitmapData = new BitmapData(_internalSampleArea.width, _internalSampleArea.height, false, 0x000000);
-            render();
-        }
-
 
         public function clear():void
         {
@@ -301,7 +270,7 @@ package com.flashartofwar
         {
             if (!_invalid)
             {
-                try
+                if(stage)
                 {
                     stage.invalidate();
                     _invalid = true;
@@ -320,7 +289,7 @@ package com.flashartofwar
                         break;
                     }
                 }
-                catch(error:Error)
+                else
                 {
                     _invalid = false;
                 }
@@ -333,7 +302,7 @@ package com.flashartofwar
          */
         protected function onAddedToStage(event:Event):void
         {
-            //render();
+            render();
         }
 
         /**

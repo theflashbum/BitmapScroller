@@ -22,15 +22,13 @@ package
     public class BitmapScrollerApp extends Sprite
     {
 
-        protected var preloadList:Array = ["image1.jpg","image2.jpg","image3.jpg","image4.jpg","image5.jpg","image6.jpg","image7.jpg","image8.jpg","image9.jpg","image10.jpg","image11.jpg","image12.jpg","image13.jpg","image14.jpg","image15.jpg","image16.jpg","image17.jpg","image18.jpg","image19.jpg","image20.jpg","image21.jpg","image22.jpg","image23.jpg","image24.jpg","image25.jpg","image26.jpg","image27.jpg","image28.jpg","image29.jpg"];
-        protected var baseURL:String = "images/";
-        protected var currentlyLoading:String;
-        protected var loader:Loader = new Loader();
+        private var preloadList:Array = ["image1.jpg","image2.jpg","image3.jpg","image4.jpg","image5.jpg","image6.jpg","image7.jpg","image8.jpg","image9.jpg","image10.jpg","image11.jpg","image12.jpg","image13.jpg","image14.jpg","image15.jpg","image16.jpg","image17.jpg","image18.jpg","image19.jpg","image20.jpg","image21.jpg","image22.jpg","image23.jpg","image24.jpg","image25.jpg","image26.jpg","image27.jpg","image28.jpg","image29.jpg"];
+        private var baseURL:String = "images/";
+        private var currentlyLoading:String;
+        private var loader:Loader = new Loader();
         private var bitmapScroller:BitmapScroller;
         private var scrubber:HSlider;
         private var images:Vector.<BitmapData> = new Vector.<BitmapData>();
-        protected var previewScale:Number = .25;
-        //protected var sampleArea:Rectangle;
         private var easeScrollBehavior:EaseScrollBehavior;
         private var stats:Stats;
         private var isMouseDown:Boolean;
@@ -138,7 +136,8 @@ package
         private function createScrubber():void
         {
             scrubber = new HSlider(this, 0, 0, null);
-            scrubber.width = 480;
+            scrubber.width = stage.stageWidth;
+            scrubber.x = 20;
             scrubber.y = 10;
         }
 
@@ -149,11 +148,11 @@ package
         {
 
             bitmapScroller = new BitmapScroller();
+            bitmapScroller.bitmapDataCollection = images;
+            addChild(bitmapScroller);
             bitmapScroller.width = stage.stageWidth;
             bitmapScroller.height = stage.stageHeight;
-            bitmapScroller.bitmapDataCollection = images;
-            
-            addChild(bitmapScroller);
+
         }
 
         /**
@@ -214,7 +213,6 @@ package
          */
         public function loop():void
         {
-
             var percent:Number = scrubber.value / 100;
             var s:Number = bitmapScroller.totalWidth;
             var t:Number = bitmapScroller.width;

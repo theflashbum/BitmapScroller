@@ -27,8 +27,13 @@ public class BitmapScrollerTest extends BitmapScroller
             collection.push(new BitmapData(demoImageWidth, demoImageHeight, false, 0x000000));
         }
 
-        super(new Rectangle(0, 0, 500, 100), collection);
+        super();
+        
+        width = 500;
+        height = 100;
+        bitmapDataCollection = collection;
 
+        render();
 
     }
 
@@ -107,7 +112,7 @@ public class BitmapScrollerTest extends BitmapScroller
     [Test]
     public function testCalculateStartIndexOutOfRange2():void
     {
-        Assert.assertEquals(calculateCollectionStartIndex(new Point(demoImageWidth * (bitmapDataCollection.length + 1), 0)), -1);
+        Assert.assertEquals(calculateCollectionStartIndex(new Point(demoImageWidth * (_bitmapDataCollection.length + 1), 0)), -1);
     }
 
     [Test]

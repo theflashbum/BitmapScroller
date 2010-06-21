@@ -1,15 +1,16 @@
 package com.flashartofwar.behaviors {
     import flash.events.EventDispatcher;
     import flash.utils.Timer;
+    import flash.utils.getTimer;
 
     public class EaseScrollBehavior extends EventDispatcher {
 
     private var _targetX:Number;
-    private var timer:Timer;
     private var target:Object;
-    private var time:Number;
-    private var easeFunction:Function;
-
+    private var time:int;
+    private var defaultDuration:int = 500;
+    private var duration:int;
+        
     public function EaseScrollBehavior(target:Object, targetX:Number = 0) {
 
         if (!target.hasOwnProperty("scrollX")) {
@@ -19,28 +20,50 @@ package com.flashartofwar.behaviors {
         {
             this.target = target;
             _targetX = targetX;
-            this.time = time;
         }
 
     }
 
     public function set targetX(value:Number):void
     {
-        _targetX = value;
+        if(_targetX == value)
+        {
+            return;
+        }
+        else
+        {
+            if((target.scrollX == _targetX))
+            {
+                time = getTimer();
+            }
+            else
+            {
+                duration += defaultDuration;
+            }
+            _targetX = value;
+        }
     }
 
     public function calculateScrollX():void
     {
-        if ((target.x != _targetX))
+
+        if ((target.scrollX == _targetX))
         {
+            duration = defaultDuration;
+            return;
+        }
+        else
+        {
+            var interval:int = getTimer() - time;
             //t: current time, b: beginning value, c: change in position, d: duration
             var c:Number = _targetX - target.scrollX;
-            var t:Number = .25;
-            var d:Number = .8;
+            var t:Number = interval;
+            var d:Number = duration;
             var b:Number = target.scrollX;
-            target.scrollX = Math.round(quadEaseInOut(t, b, c, d));
-
+            target.scrollX = quadEaseInOut(t, b, c, d);
         }
+
+
     }
 
     /**
@@ -58,6 +81,8 @@ package com.flashartofwar.behaviors {
         return -c / 2 * ((--t) * (t - 2) - 1) + b;
     }
 
-
+    public static function easeNone (t:Number, b:Number, c:Number, d:Number):Number {
+		return c*t/d + b;
+	}
 }
 }
