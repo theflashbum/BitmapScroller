@@ -2,10 +2,8 @@ package com.flashartofwar
 {
     import flash.display.Bitmap;
     import flash.display.BitmapData;
-    import flash.display.BitmapData;
     import flash.events.Event;
     import flash.geom.Point;
-    import flash.geom.Rectangle;
     import flash.geom.Rectangle;
 
     public class BitmapScroller extends Bitmap
@@ -13,14 +11,14 @@ package com.flashartofwar
         private const INVALID_SIZE:String = "size";
         private const INVALID_SCROLL:String = "scroll";
         private const INVALID_SIZE_SCROLL:String = "all";
-        
+
         protected var _bitmapDataCollection:Vector.<BitmapData>;
         protected var collectionRects:Vector.<Rectangle>;
         protected var _totalWidth:int = 0;
         protected var _maxHeight:Number = 0;
         protected var collectionTotal:int = 0;
         protected var copyPixelOffset:Point = new Point();
-        protected var internalSampleArea:Rectangle = new Rectangle(0,0, 0, 0);
+        protected var internalSampleArea:Rectangle = new Rectangle(0, 0, 0, 0);
         protected var collectionID:int;
         protected var sourceRect:Rectangle;
         protected var sourceBitmapData:BitmapData;
@@ -36,7 +34,7 @@ package com.flashartofwar
 
         public function BitmapScroller(bitmapData:BitmapData = null, pixelSnapping:String = "auto", smoothing:Boolean = false)
         {
-            super(null, pixelSnapping ,smoothing);
+            super(null, pixelSnapping, smoothing);
         }
 
         override public function get width():Number
@@ -46,7 +44,7 @@ package com.flashartofwar
 
         override public function set width(value:Number):void
         {
-            if( value == internalSampleArea.width)
+            if (value == internalSampleArea.width)
             {
                 return;
             }
@@ -64,7 +62,7 @@ package com.flashartofwar
 
         override public function set height(value:Number):void
         {
-            if( value == internalSampleArea.height)
+            if (value == internalSampleArea.height)
             {
                 return;
             }
@@ -82,15 +80,15 @@ package com.flashartofwar
 
         public function set scrollX(value:Number):void
         {
-             if(value == internalSampleArea.x)
-             {
-                 return;
-             }
+            if (value == internalSampleArea.x)
+            {
+                return;
+            }
             else
-             {
-                 internalSampleArea.x = value;
-                 invalidate(INVALID_SCROLL);
-             }
+            {
+                internalSampleArea.x = value;
+                invalidate(INVALID_SCROLL);
+            }
         }
 
         public function get totalWidth():int
@@ -109,7 +107,7 @@ package com.flashartofwar
             if (_invalid)
             {
                 // We check to see if the size has changed. If it has we create a new bitmap. If not we clear it with fillRect
-                if(invalidSize)
+                if (invalidSize)
                 {
                     bitmapData = new BitmapData(internalSampleArea.width, internalSampleArea.height, true, 0x000000);
                     invalidSize = false;
@@ -187,7 +185,7 @@ package com.flashartofwar
             return -1;
         }
 
-        protected function draw(sampleArea:Rectangle,offset:Point = null):void
+        protected function draw(sampleArea:Rectangle, offset:Point = null):void
         {
             var output:BitmapData = this.bitmapData;
             calculationPoint.x = sampleArea.x;
@@ -267,23 +265,23 @@ package com.flashartofwar
         {
             if (!_invalid)
             {
-                if(stage)
+                if (stage)
                 {
                     stage.invalidate();
                     _invalid = true;
 
-                    switch(type)
+                    switch (type)
                     {
                         case INVALID_SIZE:
                             invalidSize = true;
-                        break;
+                            break;
                         case INVALID_SCROLL:
                             invalidScroll = true;
-                        break;
+                            break;
                         case INVALID_SIZE_SCROLL:
                             invalidScroll = true;
                             invalidSize = true;
-                        break;
+                            break;
                     }
                 }
                 else

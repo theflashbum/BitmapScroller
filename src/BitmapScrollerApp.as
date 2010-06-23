@@ -1,8 +1,8 @@
 package
 {
-    import com.bit101.components.HSlider;
     import com.flashartofwar.BitmapScroller;
     import com.flashartofwar.behaviors.EaseScrollBehavior;
+    import com.flashartofwar.ui.Slider;
 
     import flash.display.Bitmap;
     import flash.display.BitmapData;
@@ -14,7 +14,6 @@ package
     import flash.events.IOErrorEvent;
     import flash.events.MouseEvent;
     import flash.events.SecurityErrorEvent;
-    import flash.geom.Rectangle;
     import flash.net.URLRequest;
 
     import net.hires.debug.Stats;
@@ -27,11 +26,11 @@ package
         private var currentlyLoading:String;
         private var loader:Loader = new Loader();
         private var bitmapScroller:BitmapScroller;
-        private var scrubber:HSlider;
         private var images:Vector.<BitmapData> = new Vector.<BitmapData>();
         private var easeScrollBehavior:EaseScrollBehavior;
         private var stats:Stats;
         private var isMouseDown:Boolean;
+        private var slider:Slider;
 
         /**
          *
@@ -91,9 +90,8 @@ package
          */
         private function onStageResize(event:Event = null):void
         {
-            bitmapScroller.width = scrubber.width = stage.stageWidth;
+            bitmapScroller.width = slider.width = stage.stageWidth;
             bitmapScroller.height = stage.stageHeight;
-
         }
 
         /**
@@ -135,9 +133,12 @@ package
          */
         private function createScrubber():void
         {
-            scrubber = new HSlider(this, 0, 0, null);
-            scrubber.width = stage.stageWidth;
-            scrubber.y = 10;
+
+            slider = new Slider();
+            slider.y = 10;
+            slider.width = stage.stageWidth;
+            addChild(slider);
+
         }
 
         /**
@@ -212,15 +213,16 @@ package
          */
         public function loop():void
         {
-            var percent:Number = scrubber.value / 100;
+            var percent:Number = slider.value / 100;
             var s:Number = bitmapScroller.totalWidth;
             var t:Number = bitmapScroller.width;
 
             easeScrollBehavior.targetX = percent * (s - t);
             //
-            easeScrollBehavior.calculateScrollX();
+            easeScrollBehavior.update();
             //
             bitmapScroller.render();
+
         }
 
         // This is for mobile touch support
@@ -263,7 +265,7 @@ package
             {
 
                 var percent:Number = event.localX / stage.stageWidth * 100;
-                scrubber.value = percent;
+                slider.value = percent;
             }
         }
     }
