@@ -12,8 +12,8 @@ package com.flashartofwar
         private const INVALID_SCROLL:String = "scroll";
         private const INVALID_SIZE_SCROLL:String = "all";
 
-        protected var _bitmapDataCollection:Vector.<BitmapData>;
-        protected var collectionRects:Vector.<Rectangle>;
+        protected var _bitmapDataCollection:Array;
+        protected var collectionRects:Array;
         protected var _totalWidth:int = 0;
         protected var _maxHeight:Number = 0;
         protected var collectionTotal:int = 0;
@@ -133,7 +133,7 @@ package com.flashartofwar
             collectionTotal = _bitmapDataCollection.length;
             var rect:Rectangle;
 
-            collectionRects = new Vector.<Rectangle>(collectionTotal);
+            collectionRects = new Array(collectionTotal);
 
             var lastWidth:Number = 0;
             _totalWidth = 0;
@@ -310,7 +310,7 @@ package com.flashartofwar
             removeEventListener(Event.REMOVED_FROM_STAGE, onRemovedFromStage);
         }
 
-        public function set bitmapDataCollection(value:Vector.<BitmapData>):void
+        public function set bitmapDataCollection(value:Array):void
         {
             _bitmapDataCollection = value;
             indexCollection();
