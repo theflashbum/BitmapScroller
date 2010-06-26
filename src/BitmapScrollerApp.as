@@ -26,7 +26,7 @@ package
         private var currentlyLoading:String;
         private var loader:Loader = new Loader();
         private var bitmapScroller:BitmapScroller;
-        private var images:Vector.<BitmapData> = new Vector.<BitmapData>();
+        private var images:Array = new Array();
         private var easeScrollBehavior:EaseScrollBehavior;
         private var stats:Stats;
         private var isMouseDown:Boolean;
