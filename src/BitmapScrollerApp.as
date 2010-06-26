@@ -66,12 +66,7 @@ package
             createEaseScrollBehavior();
             createStats();
 
-            if (CONFIG::mobile)
-            {
-                //This method is here for mobile testing
-                fingerTouch();
-            }
-            else
+            if (!CONFIG::mobile)
             {
                 // Once everything is set up add stage resize listeners
                 this.stage.addEventListener(Event.RESIZE, onStageResize);
@@ -79,8 +74,12 @@ package
                 // calls stage resize once to put everything in its correct place
                 onStageResize();
             }
+            else
+            {
+                fingerTouch();
+            }
 
-
+            onStageResize();
             activateLoop();
         }
 
@@ -92,6 +91,10 @@ package
         {
             bitmapScroller.width = slider.width = stage.stageWidth;
             bitmapScroller.height = stage.stageHeight;
+            slider.y = stage.stageHeight - slider.height - 20;
+
+            slider.width -= 40;
+            slider.x = 20;
         }
 
         /**
@@ -133,10 +136,19 @@ package
          */
         private function createScrubber():void
         {
+            var sWidth:int = stage.stageWidth; 
+            var sHeight:int = 10;
+            var dWidth:int = 40;
+            var corners:int = 5;
+            if (CONFIG::mobile)
+            {
+                sHeight = 20;
+                dWidth = 60;
+                corners = 10;
+            }
 
-            slider = new Slider();
-            slider.y = 10;
-            slider.width = stage.stageWidth;
+            slider = new Slider(sWidth, sHeight, dWidth, corners);
+            slider.y = stage.stageHeight - slider.height - 20;
             addChild(slider);
 
         }
@@ -264,7 +276,7 @@ package
             if (isMouseDown)
             {
 
-                var percent:Number = event.localX / stage.stageWidth * 100;
+                var percent:Number = (event.localX) / (stage.stageWidth) * 100;
                 slider.value = percent;
             }
         }

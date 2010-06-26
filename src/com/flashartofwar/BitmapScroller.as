@@ -35,6 +35,7 @@ package com.flashartofwar
         public function BitmapScroller(bitmapData:BitmapData = null, pixelSnapping:String = "auto", smoothing:Boolean = false)
         {
             super(null, pixelSnapping, smoothing);
+            addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
         }
 
         override public function get width():Number
@@ -141,6 +142,8 @@ package com.flashartofwar
 
             for (i = 0; i < collectionTotal; ++ i)
             {
+                if(_bitmapDataCollection[i] is BitmapData)
+                {
                 bmd = _bitmapDataCollection[i] as BitmapData;
 
                 // create a rect to represent the BitmapData
@@ -156,6 +159,11 @@ package com.flashartofwar
                 if (bmd.height > _maxHeight)
                 {
                     _maxHeight = bmd.height;
+                }
+                }
+                else
+                {
+                    throw new Error("BitmapScroller can only process BitmapData.");
                 }
             }
 
@@ -187,7 +195,6 @@ package com.flashartofwar
 
         protected function draw(sampleArea:Rectangle, offset:Point = null):void
         {
-            var output:BitmapData = this.bitmapData;
             calculationPoint.x = sampleArea.x;
             calculationPoint.y = sampleArea.y;
 
@@ -209,11 +216,11 @@ package com.flashartofwar
                 sampleArea.x = point.x;
                 sampleArea.y = point.y;
 
-                output.copyPixels(sourceBitmapData, sampleArea, offset);
+                bitmapData.copyPixels(sourceBitmapData, sampleArea, offset);
 
                 if (leftOver > 0)
                 {
-                    offset = new Point(output.width - leftOver, 0);
+                    offset = new Point(bitmapData.width - leftOver, 0);
                     var leftOverSampleArea:Rectangle = calculateLeftOverSampleArea(sampleArea, leftOver, sourceRect);
 
                     draw(leftOverSampleArea, offset);
@@ -265,28 +272,20 @@ package com.flashartofwar
         {
             if (!_invalid)
             {
-                if (stage)
-                {
-                    stage.invalidate();
-                    _invalid = true;
+                _invalid = true;
 
-                    switch (type)
-                    {
-                        case INVALID_SIZE:
-                            invalidSize = true;
-                            break;
-                        case INVALID_SCROLL:
-                            invalidScroll = true;
-                            break;
-                        case INVALID_SIZE_SCROLL:
-                            invalidScroll = true;
-                            invalidSize = true;
-                            break;
-                    }
-                }
-                else
+                switch (type)
                 {
-                    _invalid = false;
+                    case INVALID_SIZE:
+                        invalidSize = true;
+                        break;
+                    case INVALID_SCROLL:
+                        invalidScroll = true;
+                        break;
+                    case INVALID_SIZE_SCROLL:
+                        invalidScroll = true;
+                        invalidSize = true;
+                        break;
                 }
             }
         }
@@ -297,6 +296,8 @@ package com.flashartofwar
          */
         protected function onAddedToStage(event:Event):void
         {
+            removeEventListener(Event.ADDED_TO_STAGE, onAddedToStage);            
+            addEventListener(Event.REMOVED_FROM_STAGE, onRemovedFromStage);
             render();
         }
 
@@ -306,8 +307,8 @@ package com.flashartofwar
          */
         protected function onRemovedFromStage(event:Event):void
         {
-            removeEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
             removeEventListener(Event.REMOVED_FROM_STAGE, onRemovedFromStage);
+            removeEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
         }
 
         public function set bitmapDataCollection(value:Vector.<BitmapData>):void
