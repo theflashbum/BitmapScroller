@@ -16,6 +16,10 @@ package
     import flash.events.SecurityErrorEvent;
     import flash.net.URLRequest;
 
+    import flash.text.TextField;
+
+    import flash.text.TextFieldAutoSize;
+
     import net.hires.debug.Stats;
 
     public class BitmapScrollerApp extends Sprite
@@ -31,6 +35,7 @@ package
         private var stats:Stats;
         private var isMouseDown:Boolean;
         private var slider:Slider;
+        private var preloadStatus:TextField;
 
         /**
          *
@@ -44,6 +49,13 @@ package
                 baseURL = "/" + baseURL;
             }
 
+            preloadStatus = new TextField();
+            preloadStatus.autoSize = TextFieldAutoSize.LEFT;
+            preloadStatus.x = 10;
+            preloadStatus.y = 10;
+            preloadStatus.selectable = false;
+            addChild(preloadStatus);
+            
             preload();
         }
 
@@ -176,11 +188,13 @@ package
 
             if (preloadList.length == 0)
             {
+                removeChild(preloadStatus);
                 init();
             }
             else
             {
                 loadNext();
+                preloadStatus.text = preloadList.length + " Images Left To Load.";
             }
         }
 
@@ -203,7 +217,7 @@ package
          */
         private function onError(event:*):void
         {
-            trace("Error loading:", event);
+            preloadStatus.text = event.text;
         }
 
         /**
