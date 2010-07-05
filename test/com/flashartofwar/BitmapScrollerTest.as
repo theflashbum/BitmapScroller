@@ -19,7 +19,7 @@ public class BitmapScrollerTest extends BitmapScroller
     
     public function BitmapScrollerTest()
     {
-        var collection:Vector.<BitmapData> = new Vector.<BitmapData>();
+        var collection:Array = [];
 
         for (var i:int; i < 3; i ++)
         {
