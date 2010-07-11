@@ -1,12 +1,10 @@
-/**
- * Modified Version of
- * Slider.as
- * Keith Peters
- * version 0.9.5
+/*
+ * The MIT License
  *
- * Abstract base slider class for HSlider and VSlider.
- *
- * Copyright (c) 2010 Keith Peters
+ * Original Author: Keith Peters
+ * Modified By: Jesse Freeman of FlashArtOfWar.com
+ * Copyright (c) 2010
+ * Class File: SliderBehavior.as (Modified version of Slider from Minimal Comps.)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
