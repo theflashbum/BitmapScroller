@@ -5,5 +5,7 @@ package com.flashartofwar.behaviors
         function get value():Number;
 
         function set value(value:Number):void;
+
+        function get ticks():Number;
     }
 }

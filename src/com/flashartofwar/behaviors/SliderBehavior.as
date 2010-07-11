@@ -50,8 +50,8 @@ package com.flashartofwar.behaviors
         protected var _max:Number = 100;
         protected var _min:Number = 0;
         protected var _orientation:String;
-        protected var _tick:Number = 1;
-
+        //protected var _tick:Number = 1;
+        //protected var _numTics:Number = 48; //total width of images / 480, rounded up.
 
         public function SliderBehavior(target:Sprite)
         {
@@ -88,6 +88,14 @@ package com.flashartofwar.behaviors
                 track.removeEventListener(MouseEvent.MOUSE_DOWN, onBackClick);
             }
         }
+
+        /**
+         * Find position of nearest tick
+         */
+         protected function nearestTick(tl:Number, nt:Number, rp:Number):Number
+         {
+            return (tl/nt)*Math.round(nt*rp/tl);
+         }
 
         /**
          * Adjusts value to be within minimum and maximum.
@@ -139,6 +147,8 @@ package com.flashartofwar.behaviors
                 dragger.x = target.mouseX - dragger.width / 2;
                 dragger.x = Math.max(dragger.x, 0);
                 dragger.x = Math.min(dragger.x, track.width - dragger.width);
+                //this next line has a hilarious effect.
+                dragger.x = nearestTick(track.width - dragger.width, ticks, dragger.x);
                 _value = dragger.x / (track.width - dragger.width) * (_max - _min) + _min;
             }
             else
@@ -178,6 +188,21 @@ package com.flashartofwar.behaviors
         {
             target.stage.removeEventListener(MouseEvent.MOUSE_UP, onDrop);
             target.stage.removeEventListener(MouseEvent.MOUSE_MOVE, onSlide);
+            var oldValue:Number = _value;
+            if (_orientation == HORIZONTAL)
+            {
+                //this next line has a hilarious effect.
+                dragger.x = nearestTick(track.width - dragger.width, ticks, dragger.x);
+                _value = dragger.x / (track.width - dragger.width) * (_max - _min) + _min;
+            }
+            else
+            {
+               // _value = (track.height - dragger.height - dragger.y) / (track.height - dragger.height) * (_max - _min) + _min;
+            }
+            if (_value != oldValue)
+            {
+                dispatchEvent(new Event(Event.CHANGE));
+            }
             target.stopDrag();
         }
 
@@ -233,7 +258,7 @@ package com.flashartofwar.behaviors
 
         public function get value():Number
         {
-            return (_value / _tick) * _tick;
+            return _value;//( / _tick) * _tick;
         }
 
         /**
@@ -269,7 +294,7 @@ package com.flashartofwar.behaviors
         /**
          * Gets / sets the tick value of this slider. This round the value to the nearest multiple of this number.
          */
-        public function set tick(t:Number):void
+        /*public function set tick(t:Number):void
         {
             _tick = t;
         }
@@ -277,6 +302,11 @@ package com.flashartofwar.behaviors
         public function get tick():Number
         {
             return _tick;
+        }*/
+        
+        public function get ticks():Number
+        {
+            return ISlider(target).ticks;
         }
     }
 }

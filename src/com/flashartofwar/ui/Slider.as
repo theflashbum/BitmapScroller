@@ -19,11 +19,13 @@ package com.flashartofwar.ui
         private var draggerWidth:Number;
         private var roundedCorners:Number;
         private var maskShape:Sprite;
+        private var _ticks:Number;
 
-        public function Slider(width:Number = 100, height:Number = 10, draggerWidth:Number = 40, roundedCorners:Number = 5)
+        public function Slider(width:Number = 100, height:Number = 10, draggerWidth:Number = 40, roundedCorners:Number = 5, ticks:Number = 0)
         {
             _width = width;
             _height = height;
+            this.ticks = ticks;
             this.draggerWidth = draggerWidth;
             this.roundedCorners = roundedCorners;
             init();
@@ -122,7 +124,15 @@ package com.flashartofwar.ui
             return sprite;
         }
 
+        public function get ticks():Number
+        {
+            return _ticks;
+        }
 
+        public function set ticks(value:Number):void
+        {
+            _ticks = value < 0 ? 0 : value;
+        }
     }
 }
 
