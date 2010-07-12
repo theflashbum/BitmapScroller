@@ -47,7 +47,7 @@ package com.flashartofwar.ui
         private var maskShape:Sprite;
         private var _ticks:Number;
 
-        public function Slider(width:Number = 100, height:Number = 10, draggerWidth:Number = 40, roundedCorners:Number = 5, ticks:Number = 0)
+        public function Slider(width:Number = 100, height:Number = 10, draggerWidth:Number = 40, roundedCorners:Number = 5, ticks:Number = 10)
         {
             _width = width;
             _height = height;
@@ -94,9 +94,14 @@ package com.flashartofwar.ui
         private function onAddedToStage(event:Event):void
         {
             behavior = new SliderBehavior(this);
-
+            behavior.addEventListener(Event.CHANGE, onValueChange);
             removeEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
             addEventListener(Event.REMOVED_FROM_STAGE, onRemovedFromStage);
+        }
+
+        private function onValueChange(event:Event):void
+        {
+            dispatchEvent(event);
         }
 
         private function onRemovedFromStage(event:Event):void
@@ -147,6 +152,20 @@ package com.flashartofwar.ui
             sprite.graphics.drawRoundRect(0, 0, _width, _height, roundedCorners);
             sprite.graphics.endFill();
             sprite.scale9Grid = new Rectangle(roundedCorners+2, _height/2 + 2, _width - (roundedCorners * 2 + 4), 2);
+
+            /*if(ticks > 0)
+            {
+                var i:int;
+                var tickWidth:int = _width / ticks;
+
+                for (i = 0; i < ticks; ++i)
+                {
+                    sprite.graphics.beginFill(0x10ffffff, i%2 * .3);
+                    sprite.graphics.drawRect(tickWidth * i, 0, tickWidth, _height);
+                    sprite.graphics.endFill();
+                }
+            }*/
+
             return sprite;
         }
 
@@ -158,6 +177,11 @@ package com.flashartofwar.ui
         public function set ticks(value:Number):void
         {
             _ticks = value < 0 ? 0 : value;
+        }
+
+        public function get currentTick():Number
+        {
+            return (value  / _ticks) * _ticks;
         }
     }
 }

@@ -187,8 +187,15 @@ package
 
             slider = new Slider(sWidth, sHeight, dWidth, corners);
             slider.y = stage.stageHeight - slider.height - 20;
+
+            slider.addEventListener(Event.CHANGE, onSliderValueChange)
             addChild(slider);
 
+        }
+
+        private function onSliderValueChange(event:Event):void
+        {
+            trace("Slider Changed", slider.value);
         }
 
         /**
@@ -274,7 +281,6 @@ package
             easeScrollBehavior.update();
             //
             bitmapScroller.render();
-
         }
 
         // This is for mobile touch support
@@ -315,7 +321,6 @@ package
         {
             if (isMouseDown)
             {
-
                 var percent:Number = (event.localX) / (stage.stageWidth) * 100;
                 slider.value = percent;
             }

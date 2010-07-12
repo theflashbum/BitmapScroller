@@ -22,6 +22,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
+ * 
  */
 
 package com.flashartofwar
@@ -34,12 +35,13 @@ package com.flashartofwar
 
     public class BitmapScroller extends Bitmap
     {
-        private const INVALID_SIZE:String = "size";
-        private const INVALID_SCROLL:String = "scroll";
-        private const INVALID_SIZE_SCROLL:String = "all";
+        protected const INVALID_SIZE:String = "size";
+        protected const INVALID_SCROLL:String = "scroll";
+        protected const INVALID_SIZE_SCROLL:String = "all";
+        protected const INVALID_VISUALS:String = "visuals";
 
         protected var _bitmapDataCollection:Array;
-        protected var collectionRects:Array;
+        protected var collectionRects:Array = [];
         protected var _totalWidth:int = 0;
         protected var _maxHeight:Number = 0;
         protected var collectionTotal:int = 0;
@@ -57,6 +59,8 @@ package com.flashartofwar
         protected var _invalid:Boolean;
         protected var invalidSize:Boolean;
         protected var invalidScroll:Boolean;
+        protected var invalidVisuals:Boolean;
+
 
         public function BitmapScroller(bitmapData:BitmapData = null, pixelSnapping:String = "auto", smoothing:Boolean = false)
         {
@@ -137,7 +141,6 @@ package com.flashartofwar
                 if (invalidSize)
                 {
                     bitmapData = new BitmapData(internalSampleArea.width, internalSampleArea.height, true, 0x000000);
-                    invalidSize = false;
                 }
                 else
                 {
@@ -148,49 +151,55 @@ package com.flashartofwar
                 draw(internalSampleArea.clone());
 
                 // Clear any invalidation
-                _invalid = false;
+                clearInvalidation();
             }
+        }
+
+        private function clearInvalidation():void
+        {
+            _invalid = false;
+            invalidSize = false;
+            invalidScroll = false;
+            invalidVisuals = false;
         }
 
         protected function indexCollection():void
         {
-            var bmd:BitmapData;
-            var lastX:Number = 0;
             var i:int;
             collectionTotal = _bitmapDataCollection.length;
-            var rect:Rectangle;
-
-            collectionRects = new Array(collectionTotal);
-
-            var lastWidth:Number = 0;
             _totalWidth = 0;
             _maxHeight = 0;
 
             for (i = 0; i < collectionTotal; ++ i)
             {
-                if(_bitmapDataCollection[i] is BitmapData)
+                if (_bitmapDataCollection[i] is BitmapData)
                 {
-                bmd = _bitmapDataCollection[i] as BitmapData;
-
-                // create a rect to represent the BitmapData
-                rect = new Rectangle(lastX, 0, bmd.width, bmd.height);
-                collectionRects[i] = rect;
-
-                lastX += bmd.width + 1;
-                // Save out width information
-                lastWidth = bmd.width;
-
-                _totalWidth += lastWidth;
-
-                if (bmd.height > _maxHeight)
-                {
-                    _maxHeight = bmd.height;
-                }
+                    indexBitmapData(_bitmapDataCollection[i]);
                 }
                 else
                 {
                     throw new Error("BitmapScroller can only process BitmapData.");
                 }
+            }
+
+        }
+
+        protected function indexBitmapData(bmd:BitmapData):void
+        {
+            var lastRect:Rectangle = collectionRects[collectionRects.length - 1];
+
+            var lastX:int = lastRect ? lastRect.x + lastRect.width + 1 : 0;
+
+            // create a rect to represent the BitmapData
+            var rect:Rectangle = new Rectangle(lastX, 0, bmd.width, bmd.height);
+
+            collectionRects.push(rect);
+
+            _totalWidth += rect.width;
+
+            if (bmd.height > _maxHeight)
+            {
+                _maxHeight = bmd.height;
             }
 
         }
@@ -302,6 +311,9 @@ package com.flashartofwar
 
                 switch (type)
                 {
+                    case INVALID_VISUALS:
+                        invalidVisuals = true;
+                        break;
                     case INVALID_SIZE:
                         invalidSize = true;
                         break;
@@ -322,7 +334,7 @@ package com.flashartofwar
          */
         protected function onAddedToStage(event:Event):void
         {
-            removeEventListener(Event.ADDED_TO_STAGE, onAddedToStage);            
+            removeEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
             addEventListener(Event.REMOVED_FROM_STAGE, onRemovedFromStage);
             render();
         }

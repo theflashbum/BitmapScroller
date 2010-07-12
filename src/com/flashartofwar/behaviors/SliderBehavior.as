@@ -1,10 +1,12 @@
-/*
- * The MIT License
+/**
+ * Modified Version of
+ * Slider.as
+ * Keith Peters
+ * version 0.9.5
  *
- * Original Author: Keith Peters
- * Modified By: Jesse Freeman of FlashArtOfWar.com
- * Copyright (c) 2010
- * Class File: SliderBehavior.as (Modified version of Slider from Minimal Comps.)
+ * Abstract base slider class for HSlider and VSlider.
+ *
+ * Copyright (c) 2010 Keith Peters
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -145,8 +147,11 @@ package com.flashartofwar.behaviors
                 dragger.x = target.mouseX - dragger.width / 2;
                 dragger.x = Math.max(dragger.x, 0);
                 dragger.x = Math.min(dragger.x, track.width - dragger.width);
-                //this next line has a hilarious effect.
-                dragger.x = nearestTick(track.width - dragger.width, ticks, dragger.x);
+                if(ticks > 0)
+                {
+                    //this next line has a hilarious effect.
+                    dragger.x = nearestTick(track.width - dragger.width, ticks, dragger.x);
+                }
                 _value = dragger.x / (track.width - dragger.width) * (_max - _min) + _min;
             }
             else
@@ -186,21 +191,26 @@ package com.flashartofwar.behaviors
         {
             target.stage.removeEventListener(MouseEvent.MOUSE_UP, onDrop);
             target.stage.removeEventListener(MouseEvent.MOUSE_MOVE, onSlide);
-            var oldValue:Number = _value;
-            if (_orientation == HORIZONTAL)
+
+            if(ticks > 0)
             {
-                //this next line has a hilarious effect.
-                dragger.x = nearestTick(track.width - dragger.width, ticks, dragger.x);
-                _value = dragger.x / (track.width - dragger.width) * (_max - _min) + _min;
+                var oldValue:Number = _value;
+                if (_orientation == HORIZONTAL)
+                {
+                    //this next line has a hilarious effect.
+                    dragger.x = nearestTick(track.width - dragger.width, ticks, dragger.x);
+                    _value = dragger.x / (track.width - dragger.width) * (_max - _min) + _min;
+                }
+                else
+                {
+                   // _value = (track.height - dragger.height - dragger.y) / (track.height - dragger.height) * (_max - _min) + _min;
+                }
+                if (_value != oldValue)
+                {
+                    dispatchEvent(new Event(Event.CHANGE));
+                }
             }
-            else
-            {
-               // _value = (track.height - dragger.height - dragger.y) / (track.height - dragger.height) * (_max - _min) + _min;
-            }
-            if (_value != oldValue)
-            {
-                dispatchEvent(new Event(Event.CHANGE));
-            }
+
             target.stopDrag();
         }
 
@@ -249,6 +259,7 @@ package com.flashartofwar.behaviors
         public function set value(v:Number):void
         {
             _value = v;
+            
             correctValue();
             refresh();
 
@@ -301,7 +312,7 @@ package com.flashartofwar.behaviors
         {
             return _tick;
         }*/
-        
+
         public function get ticks():Number
         {
             return ISlider(target).ticks;
