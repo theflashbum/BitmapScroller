@@ -98,13 +98,13 @@
         </if>
     </target>
 
-    <target name="local-run-pc">
+    <target name="local-run-test-pc">
         <exec executable="${browser}">
             <arg line="file://${report.url}"/>
         </exec>
     </target>
 
-    <target name="local-run-mac">
+    <target name="local-run-test-mac">
         <exec executable="open">
             <arg line="-a ${browser} file://${report.url}"/>
         </exec>

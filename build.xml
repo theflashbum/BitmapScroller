@@ -40,7 +40,6 @@
 
     <target name="package-apk" description="Packages up project for deployment to android">
         <var name="mobile" value="true" />
-        <echo message="${mobile}"/>
         <runtarget target="compile" />
         <runtarget target="android.package-apk" />
     </target>
