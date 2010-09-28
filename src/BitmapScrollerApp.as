@@ -204,6 +204,7 @@ package
         {
 
             bitmapScroller = new BitmapScroller();
+            bitmapScroller.layout = new HorizontalScrollerLayout();
             bitmapScroller.bitmapDataCollection = images;
             addChild(bitmapScroller);
             bitmapScroller.width = stage.stageWidth;

@@ -159,11 +159,13 @@ package com.flashartofwar
 			if(!invalidated)
 				return;
 			
-			if(sizeChanged)
+			if(sizeChanged || !bitmapData)
 				initBitmapData();
 			else
 				bitmapData.fillRect(area, 0);
 			
+			sizeChanged = false;
+      
 			draw();
 			invalidated = false;
 		}
@@ -197,6 +199,7 @@ package com.flashartofwar
 				return;
 			
 			_bitmapDataCollection = value;
+			invalidated = true;
 			indexCollection();
 		}
 		
@@ -215,7 +218,7 @@ package com.flashartofwar
 				if(val is BitmapData)
 					indexBitmapData(BitmapData(val));
 				else
-					throw new Error("ScrollingBitmap can only process BitmapData.");
+					throw new Error("BitmapScroller can only process BitmapData.");
 			}
 		}
 		
