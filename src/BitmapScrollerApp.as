@@ -28,6 +28,7 @@ package
 {
     import com.flashartofwar.BitmapScroller;
     import com.flashartofwar.behaviors.EaseScrollBehavior;
+    import com.flashartofwar.scroller.HorizontalScrollerLayout;
     import com.flashartofwar.ui.Slider;
 
     import flash.display.Bitmap;
