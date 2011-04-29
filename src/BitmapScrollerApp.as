@@ -47,6 +47,7 @@ package
 
     import net.hires.debug.Stats;
 
+	[SWF(width="800",height="480",backgroundColor="#333333",frameRate="60")]
     public class BitmapScrollerApp extends Sprite
     {
 
@@ -113,7 +114,7 @@ package
             }
             else
             {
-                fingerTouch();
+                //fingerTouch();
             }
 
             onStageResize();
@@ -126,10 +127,21 @@ package
          */
         private function onStageResize(event:Event = null):void
         {
-            bitmapScroller.width = slider.width = stage.stageWidth;
-            bitmapScroller.height = stage.stageHeight;
-            slider.y = stage.stageHeight - slider.height - 20;
-
+            var stageWidth:int = stage.stageWidth;
+            var stageHeight:int = stage.stageHeight;
+			
+			/*if (!CONFIG::mobile)
+            {
+				stageWidth = stage.fullScreenWidth;
+				stageHeight = stage.fullScreenHeight;
+			}*/
+			
+			bitmapScroller.width = slider.width = stageWidth;
+            bitmapScroller.height = stageHeight;
+           	stats.x = (stageWidth - stats.width) - 10;
+			slider.y = stage.stageHeight - slider.height - 20;
+			if(slider.y > 770)
+				slider.y = 770;
             slider.width -= 40;
             slider.x = 20;
         }
@@ -140,7 +152,7 @@ package
         private function createStats():void
         {
             stats = addChild(new Stats({ bg: 0x000000 })) as Stats;
-            stats.y = 30;
+			stats.y = 10;
         }
 
         /**
@@ -184,9 +196,9 @@ package
                 corners = 10;
             }
 
-            slider = new Slider(sWidth, sHeight, dWidth, corners);
+            slider = new Slider(sWidth, sHeight, dWidth, corners, 0);
             slider.y = stage.stageHeight - slider.height - 20;
-
+			
             slider.addEventListener(Event.CHANGE, onSliderValueChange)
             addChild(slider);
 
