@@ -16,6 +16,8 @@
     <import file="${includes.loc}/compile-swf.xml" />
     <import file="${includes.loc}/compile-swc.xml" />
     <import file="${includes.loc}/android.xml" />
+    <import file="${includes.loc}/chrome.xml" />
+    <import file="${includes.loc}/ios.xml" />
 
     <target name="usage" depends="misc.usage" description="Prints usage message" />
 
@@ -46,6 +48,12 @@
 
     <target name="deploy-to-emulator" depends="package-apk,android.deploy-to-emulator" />
 
-    <target name="deploy-to-phone" depends="package-apk,android.deploy-to-phone" />
+    <target name="deploy-to-phone" depends="package-apk,android.deploy-to-device" />
+
+    <target name="package-ipa" description="Packages up project for deployment to android">
+        <var name="mobile" value="true" />
+        <runtarget target="compile" />
+        <runtarget target="ios.package-ipa" />
+    </target>
     
 </project>

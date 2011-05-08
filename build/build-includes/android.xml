@@ -1,22 +1,61 @@
 <?xml version="1.0"?>
+<!--
+  ~ /*
+  ~ * Permission is hereby granted, free of charge, to any person obtaining a copy
+  ~ * of this software and associated documentation files (the "Software"), to deal
+  ~ * in the Software without restriction, including without limitation the rights
+  ~ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  ~ * copies of the Software, and to permit persons to whom the Software is
+  ~ * furnished to do so, subject to the following conditions:
+  ~ *
+  ~ * The above copyright notice and this permission notice shall be included in
+  ~ * all copies or substantial portions of the Software.
+  ~ *
+  ~ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  ~ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  ~ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  ~ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  ~ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  ~ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+  ~ * THE SOFTWARE.
+  ~ */
+  -->
+
 <project name="android" basedir=".">
 
-    <target name="prep-bin">
-        <copy file="${basedir}/build/android-resources/template-air-app.xml"
-              tofile="${bin.loc}/${project.name}-air-app.xml"/>
+    <target name="prep-folders">
+        <if>
+            <not>
+                <available type="dir" file="${apks.loc}"/>
+            </not>
+            <then>
+                <mkdir dir="${apks.loc}"/>
+            </then>
+        </if>
+        <mkdir dir="${tmp.loc}" /> 
 
-        <replace file="${bin.loc}/${project.name}-air-app.xml">
+        <copy todir="${tmp.loc}">
+            <fileset dir="${bin.loc}">
+                <exclude name="swf"/>
+            </fileset>
+        </copy>
+        <mkdir dir="${tmp.loc}/swfs"/>
+        <copy file="${bin.loc}/swfs/${project.name.versioned}.swf" todir="${tmp.loc}/swfs"/>
+        <copy file="${basedir}/build/android-resources/template-air-app.xml"
+            tofile="${tmp.loc}/${project.name}-air-app.xml"/>
+
+
+        <replace file="${tmp.loc}/${project.name}-air-app.xml">
             <replacefilter token="@project@" value="${project.name}"/>
             <replacefilter token="@package@" value="${app.package}"/>
-            <replacefilter token="@version@" value="1"/>
+            <replacefilter token="@version@" value="${ver.num}"/>
             <replacefilter token="@projectversion@" value="${project.name.versioned}"/>
         </replace>
 
-        <antcall target="uninstall-apk"/>
     </target>
 
     <!-- Android Deployment -->
-    <target name="package-apk" depends="prep-bin">
+    <target name="package-apk" depends="generate-certificate,prep-folders">
 
         <java jar="${FLEX_HOME}/lib/adt.jar" fork="true" failonerror="true">
             <arg value="-package"/>
@@ -25,43 +64,87 @@
             <arg value="-storetype"/>
             <arg value="pkcs12"/>
             <arg value="-keystore"/>
-            <arg value="${basedir}/build/android-resources/codesigningCert.p12"/>
+            <arg value="${basedir}/build/android-resources/${certificate.filename}"/>
             <arg value="-storepass"/>
-            <arg value="${password}"/>
+            <arg value="${certificate.password}"/>
 
 
-            <arg value="${basedir}/bin/${project.name.versioned}.apk"/>
-            <arg value="${basedir}/bin/${project.name}-air-app.xml"/>
+            <arg value="${apks.loc}/${project.name.versioned}.apk"/>
+            <arg value="${tmp.loc}/${project.name}-air-app.xml"/>
 
             <arg value="-C"/>
-            <arg value="${basedir}/bin"/>
+            <arg value="${tmp.loc}"/>
             <arg value="."/>
 
+
         </java>
+
+        <delete dir="${tmp.loc}" />
     </target>
 
-    <target name="deploy-to-phone" depends="package-apk">
+    <target name="deploy-to-device" depends="package-apk">
         <exec executable="${adb}">
             <arg value="-d"/>
             <arg value="install"/>
-            <arg value="${bin.loc}/${project.name.versioned}.apk"/>
+            <arg value="-r"/>
+
+            <arg value="${apks.loc}/${project.name.versioned}.apk"/>
         </exec>
     </target>
 
     <target name="deploy-to-emulator" depends="package-apk">
         <exec executable="${adb}">
-            <!--          <arg value="-s"/>
-            <arg value="emulator-5556"/>-->
             <arg value="-e"/>
             <arg value="install"/>
-            <arg value="${bin.loc}/${project.name.versioned}.apk"/>
+            <arg value="-r"/>
+            <arg value="${apks.loc}/${project.name.versioned}.apk"/>
         </exec>
     </target>
 
-    <target name="uninstall-apk">
+    <target name="deploy-air-runtime-to-emulator">
         <exec executable="${adb}">
-            <arg value="uninstall"/>
-            <arg value="app.${app.package}"/>
+            <arg value="-e"/>
+            <arg value="install"/>
+            <arg value="-r"/>
+            <arg value="${air.runtime.emulator}"/>
         </exec>
     </target>
+
+     <target name="deploy-air-runtime-to-device">
+        <exec executable="${adb}">
+            <arg value="-d"/>
+            <arg value="install"/>
+            <arg value="-r"/>
+            <arg value="${air.runtime.device}"/>
+        </exec>
+    </target>
+
+    <target name="generate-certificate">
+
+        <if>
+            <not>
+                <available type="file" file="${basedir}/build/android-resources/${certificate.filename}"/>
+            </not>
+            <then>
+                <echo>[android] Generating Certificate</echo>
+				<exec executable="${adt}">
+                    <arg value="-certificate"/>
+                    <arg value="-cn"/>
+                    <arg value="${certificate.name}"/>
+                    <arg value="-ou"/>
+                    <arg value="${certificate.username}"/>
+                    <arg value="-o"/>
+                    <arg value="${certificate.company}"/>
+                    <arg value="-validityPeriod"/>
+                    <arg value="25"/>
+                    <arg value="2048-RSA"/>
+                    <arg value="${basedir}/build/android-resources/${certificate.filename}"/>
+                    <arg value="${certificate.password}"/>
+                </exec>
+            </then>
+        </if>
+
+
+    </target>
+
 </project>

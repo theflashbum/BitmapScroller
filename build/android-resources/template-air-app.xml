@@ -1,17 +1,54 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
-<application xmlns="http://ns.adobe.com/air/application/2.5">
-    <id>@package@</id>
-    <filename>@project@</filename>
-    <name>@project@</name>
-    <versionNumber>@version@</versionNumber>
-    <supportedProfiles>mobileDevice</supportedProfiles>
-    <initialWindow>
-        <content>swfs/@projectversion@.swf</content>
+<application xmlns="http://ns.adobe.com/air/application/2.6">
+	<id>com.flashartofwar.bitmapscroller</id>
+	<filename>BitmapScrollerApp</filename>
+	<name>BitmapScrollerApp</name>
+	<versionNumber>1.0.0</versionNumber>
+	<initialWindow>
+		<content>swfs/@projectversion@.swf</content>
+		<autoOrients>false</autoOrients>
+        <fullScreen>true</fullScreen>
         <visible>true</visible>
+        <aspectRatio>landscape</aspectRatio>
     </initialWindow>
-    <icon>
-<image72x72>images/icons/app-icon-72x72.png</image72x72>
-<image48x48>images/icons/app-icon-48x48.png</image48x48>
-<image36x36>images/icons/app-icon-36x36.png</image36x36>
-</icon>
+	<icon>
+		<image36x36>images/icons/app-icon-36x36.png</image36x36>
+		<image48x48>images/icons/app-icon-48x48.png</image48x48>
+		<image72x72>images/icons/app-icon-72x72.png</image72x72>
+	</icon>
+
+<iPhone>
+        <InfoAdditions><![CDATA[
+			<key>UIDeviceFamily</key>
+			<array>
+				<string>1</string>
+				<string>2</string>
+			</array>
+		]]></InfoAdditions>
+        <requestedDisplayResolution>high</requestedDisplayResolution>
+    </iPhone>
+    <android>
+        <manifestAdditions><![CDATA[
+			<manifest android:installLocation="auto">
+			    <!--See the Adobe AIR documentation for more information about setting Google Android permissions-->
+			    <!--Removing the permission android.permission.INTERNET will have the side effect
+					of preventing you from debugging your application on your device-->
+			    <uses-permission android:name="android.permission.INTERNET"/>
+			    <!--<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>-->
+			    <!--<uses-permission android:name="android.permission.READ_PHONE_STATE"/>-->
+			    <!--<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>-->
+			    <!--The DISABLE_KEYGUARD and WAKE_LOCK permissions should be toggled together
+					in order to access AIR's SystemIdleMode APIs-->
+			    <!--<uses-permission android:name="android.permission.DISABLE_KEYGUARD"/>-->
+			    <!--<uses-permission android:name="android.permission.WAKE_LOCK"/>-->
+			    <!--<uses-permission android:name="android.permission.CAMERA"/>-->
+			    <!--<uses-permission android:name="android.permission.RECORD_AUDIO"/>-->
+			    <!--The ACCESS_NETWORK_STATE and ACCESS_WIFI_STATE permissions should be toggled
+					together in order to use AIR's NetworkInfo APIs-->
+			    <!--<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>-->
+			    <!--<uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>-->
+			</manifest>
+
+		]]></manifestAdditions>
+    </android>
 </application>

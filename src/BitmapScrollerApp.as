@@ -68,14 +68,18 @@ package
          */
         public function BitmapScrollerApp()
         {
-            configureStage();
+            trace("Hello");
+			
+			configureStage();
 
             if (CONFIG::mobile)
             {
                 baseURL = "/" + baseURL;
             }
+			
 
             preloadStatus = new TextField();
+			preloadStatus.text = "Loading...";
             preloadStatus.autoSize = TextFieldAutoSize.LEFT;
             preloadStatus.x = 10;
             preloadStatus.y = 10;
@@ -83,6 +87,7 @@ package
             addChild(preloadStatus);
             
             preload();
+			
         }
 
         /**

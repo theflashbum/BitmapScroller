@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<project name="chrome" basedir=".">
+
+<target name="setup-manifest">
+    <copy file="${basedir}/build/html-template/manifest.template.json" tofile="${bin.loc}/manifest.json"/>
+
+    <replace file="${bin.loc}/manifest.json">
+        <replacefilter token="@version@" value="${ver.num}"/>
+        <replacefilter token="@name@" value="${project.name}"/>
+        <replacefilter token="@description@" value="${project.description}"/>
+        <replacefilter token="@url@" value="${project.url}"/>
+    </replace>
+</target>
+
+<target name="package-chrome-app" depends="setup-manifest">
+    <zip destfile="chrome/${project.name}.zip" basedir="${bin.loc}" excludes="*.cache" />
+</target>
+
+</project>

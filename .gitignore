@@ -8,6 +8,7 @@
 /doc/*
 /report/*
 /dist/*
+/ipas/*
  
 /.actionScriptProperties
 /.flexProperties
@@ -22,5 +23,8 @@ Thumbs.db
 .DS_Store
 
 build.properties
-
+/tmp/*
 /*.iml
+*.mobileprovision
+*.p12
+*.cer

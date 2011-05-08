@@ -1,0 +1,61 @@
+<project name="ios" basedir=".">
+
+
+
+    <target name="prep-folders">
+        <if>
+            <not>
+                <available type="dir" file="${ipas.loc}"/>
+            </not>
+            <then>
+                <mkdir dir="${ipas.loc}"/>
+            </then>
+        </if>
+        <mkdir dir="${tmp.loc}" />
+
+        <copy todir="${tmp.loc}">
+            <fileset dir="${bin.loc}">
+                <exclude name="swf"/>
+            </fileset>
+        </copy>
+        <mkdir dir="${tmp.loc}/swfs"/>
+        <copy file="${bin.loc}/swfs/${project.name.versioned}.swf" todir="${tmp.loc}/swfs"/>
+        <copy file="${basedir}/build/ios-resources/template-air-app.xml"
+            tofile="${tmp.loc}/${project.name}-air-app.xml"/>
+
+
+        <replace file="${tmp.loc}/${project.name}-air-app.xml">
+            <replacefilter token="@project@" value="${project.name}"/>
+            <replacefilter token="@package@" value="${ipa.package}"/>
+            <replacefilter token="@version@" value="${ver.num}"/>
+            <replacefilter token="@projectversion@" value="${project.name.versioned}"/>
+        </replace>
+
+    </target>
+
+
+
+    <target name="package-ipa" depends="prep-folders">
+        <java jar="${FLEX_HOME}/lib/adt.jar" fork="true" failonerror="true">
+            <arg value="-package"/>
+            <arg value="-target"/>
+            <arg value="ipa-ad-hoc"/>
+            <arg value="-provisioning-profile"/>
+            <arg value="${basedir}/build/ios-resources/${ios.provision}"/>
+            <arg value="-storetype"/>
+            <arg value="pkcs12"/>
+            <arg value="-keystore"/>
+            <arg value="${basedir}/build/ios-resources/${certificate.filename}"/>
+            <arg value="-storepass"/>
+            <arg value="${certificate.password}"/>
+            <arg value="${basedir}/ipas/${project.name}.ipa"/>
+            <arg value="${tmp.loc}/${project.name}-air-app.xml"/>
+            <arg value="-C"/>
+            <arg value="${tmp.loc}"/>
+            <arg value="."/>
+        </java>
+
+        <delete dir="${tmp.loc}" />
+    </target>
+
+    </project>

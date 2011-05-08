@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<application xmlns="http://ns.adobe.com/air/application/2.6">
+    <id>package@</id>
+    <filename>@project@</filename>
+    <name>@project@</name>
+    <versionNumber>@version@</versionNumber>
+    <supportedProfiles>mobileDevice</supportedProfiles>
+    <initialWindow>
+        <content>swfs/@projectversion@.swf</content>
+        <autoOrients>false</autoOrients>
+        <fullScreen>true</fullScreen>
+        <visible>true</visible>
+        <aspectRatio>landscape</aspectRatio>
+    </initialWindow>
+    <icon>
+<image72x72>images/icons/app-icon-72x72.png</image72x72>
+<image48x48>images/icons/app-icon-48x48.png</image48x48>
+<image36x36>images/icons/app-icon-36x36.png</image36x36>
+</icon>
+</application>

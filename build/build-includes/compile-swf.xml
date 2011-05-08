@@ -1,14 +1,12 @@
 <?xml version="1.0"?>
 <project name="compile-swf" basedir="." default="local-run">
-
-
     <target name="clean-bin">
         <!-- Remove all directories created during the build process -->
         <if>
             <available type="dir" file="${bin.loc}"/>
             <then>
                 <delete includeemptydirs="true" failonerror="false">
-                    <fileset dir="${bin.loc}" defaultexcludes="false">
+                	<fileset dir="${bin.loc}" defaultexcludes="false">
                         <include name="**/*"/>
                     </fileset>
                 </delete>
@@ -19,9 +17,24 @@
         </if>
     </target>
 
+    <target name="clean-css">
+        <if>
+            <available type="dir" file="${bin.loc}/css"/>
+            <then>
+                <replaceregexp flags="g">
+                    <regexp pattern="\s*([@{}:;,]|\)\s|\s\()\s*|\s*\/\*([^*\\\\]|\*(?!\/))+\*\/\s*|[\n\r\t]" />
+                    <substitution expression="\1" />
+                    <fileset dir="${bin.loc}/css">
+                        <include name="*.css" />
+                    </fileset>
+                </replaceregexp>
+            </then>
+        </if>
+    </target>
 
     <target name="setup-bin" depends="clean-bin">
-        <sync todir="${bin.loc}">
+    	<echo>[compile] Setting Up Bin Folder</echo>
+    	<sync todir="${bin.loc}">
             <fileset dir="${basedir}/build/bin-resources"/>
         </sync>
 
@@ -36,12 +49,36 @@
             <replacefilter token="@version_minor@" property="version_minor"/>
             <replacefilter token="@version_revision@" property="version_revision"/>
         </replace>
+        <if>
+            <istrue value="${csstidy}" />
+            <then>
+                <runtarget target="clean-css" />
+            </then>
+        </if>
     </target>
+
 
     <!-- Compile Release SWF -->
     <target name="compile" depends="setup-bin">
         <echo>[compile] Compiling SWF</echo>
         <echo>[compile] Using Flex SDK at: ${FLEX_HOME}</echo>
+
+        <if>
+            <equals arg1="debug" arg2="${compile.type}" casesensitive="false"/>
+            <then>
+                <property name="debug.flag" value="true"/>
+                <property name="optimize.flag" value="false"/>
+                <property name="mode.name" value="Debug"/>
+            </then>
+            <elseif>
+                <equals arg1="optimize" arg2="${compile.type}" casesensitive="false"/>
+                <then>
+                    <property name="debug.flag" value="false"/>
+                    <property name="optimize.flag" value="true"/>
+                    <property name="mode.name" value="Optimized"/>
+                </then>
+            </elseif>
+        </if>
 
         <java jar="${FLEX_HOME}/lib/mxmlc.jar" dir="${FLEX_HOME}/frameworks" fork="true" failonerror="true">
             <arg value="${main.src.loc}/${project.name}.as"/>
@@ -49,11 +86,13 @@
 
             <arg value="-output=${bin.loc}/swfs/${project.name.versioned}.swf"/>
             <arg value="-static-link-runtime-shared-libraries=true"/>
+            <!--Compile mode debug vs. optimize-->
+            <arg value="-debug=${debug.flag}"/>
+            <arg value="-optimize=${optimize.flag}"/>
             <!-- Include classes from SWCs in this folder, but only the ones we use. -->
             <arg value="-library-path+=${lib.loc}"/>
             <arg value="-library-path+=${air.swcs}"/>
             <arg value="-incremental=true"/>
-            <arg value="-debug=true"/>
             <arg value="-verbose-stacktraces=true"/>
             <arg value="-headless-server=true"/>
             <arg value="-use-network=false"/>
@@ -61,32 +100,24 @@
             <arg value="-define=CONFIG::mobile,${mobile}"/>
         </java>
 
-        <echo>[compile] Debug SWF ${project.name.versioned}.swf created successfully</echo>
+        <echo>[compile] ${mode.name} SWF ${project.name.versioned}.swf created successfully</echo>
     </target>
 
-    <target name="local-run" depends="compile">
+    <target name="local-run">
         <echo message="${os.name}"/>
         <if>
             <equals arg1="${os.name}" arg2="Mac OS X"/>
             <then>
-                <antcall target="local-run-mac"/>
+                <exec executable="open">
+                    <arg line="-a ${browser} ${app.url}"/>
+                </exec>
             </then>
             <else>
-                <antcall target="local-run-pc"/>
+                <exec executable="${browser}">
+                    <arg line="${app.url}"/>
+                </exec>
             </else>
         </if>
-    </target>
-
-    <target name="local-run-pc">
-        <exec executable="${browser}">
-            <arg line="file://${bin.loc}/index.html"/>
-        </exec>
-    </target>
-
-    <target name="local-run-mac">
-        <exec executable="open">
-            <arg line="-a ${browser} ${bin.loc}/index.html"/>
-        </exec>
     </target>
 
 </project>
